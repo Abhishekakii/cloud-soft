@@ -1,19 +1,41 @@
-import React, { useState } from "react";
-import { doc, getDoc, getFirestore } from "firebase/firestore";
-import fire_db from "../utils/firebase";
+import React, { useEffect, useState } from "react";
+import {
+	doc,
+	getDoc,
+	getFirestore,
+	getDocs,
+	collection,
+} from "firebase/firestore";
+// import fire_db from "../utils/firebase";
 
 const SearchUser = () => {
 	// a local state to store the currently selected file.
 	const [user, setSelectedUser] = React.useState(null);
 	const [userDetails, setUserDetails] = useState([]);
 	const [error, setError] = useState(null);
+
 	const db = getFirestore();
+	const docs = [];
+
+	const getMarker = async () => {
+		const snapshot = await getDocs(collection(db, "Abhishek"));
+		snapshot.forEach((doc) => {
+			docs.push(doc.id);
+		});
+	};
+
+	useEffect(() => {
+		getMarker();
+	}, []);
 
 	const handleSubmit = async (event) => {
+		const filtered_user = docs.filter((val) =>
+			val?.toLowerCase()?.includes(user)
+		)[0];
 		event.preventDefault();
 		setError(false);
 		if (event) {
-			const docRef = doc(db, "test-db", user);
+			const docRef = doc(db, "Abhishek", filtered_user);
 			const docSnap = await getDoc(docRef);
 			if (docSnap.exists() && docSnap.data()) {
 				const user_details = [docSnap.data()];
@@ -21,7 +43,6 @@ const SearchUser = () => {
 				setUserDetails(user_details);
 			} else {
 				setError(true);
-				console.log("doesn't exist");
 			}
 		} else {
 			setError(true);
@@ -39,8 +60,9 @@ const SearchUser = () => {
 					userDetails?.map((obj, idx) => {
 						return (
 							<div className="user" key={idx}>
-								<div className="user__name">Name : {obj?.name}</div>
-								<div className="user__age">Age : {obj?.age}</div>
+								<div className="user__name">Name : {obj?.Name}</div>
+								<div className="user__age">Country : {obj?.Country}</div>
+								<div className="user__age">Website : {obj?.Website}</div>
 							</div>
 						);
 					})
