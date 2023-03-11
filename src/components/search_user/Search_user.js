@@ -6,6 +6,7 @@ import {
 	getDocs,
 	collection,
 } from "firebase/firestore";
+import app from "../utils/firebase";
 // import fire_db from "../utils/firebase";
 
 const SearchUser = () => {
@@ -14,7 +15,7 @@ const SearchUser = () => {
 	const [userDetails, setUserDetails] = useState([]);
 	const [error, setError] = useState(null);
 
-	const db = getFirestore();
+	const db = getFirestore(app);
 	const docs = [];
 
 	const getMarker = async () => {
@@ -24,17 +25,16 @@ const SearchUser = () => {
 		});
 	};
 
-	useEffect(() => {
-		getMarker();
-	}, []);
+	
 
 	const handleSubmit = async (event) => {
+		getMarker();
 		const filtered_user = docs.filter((val) =>
-			val?.toLowerCase()?.includes(user)
+			val?.toLowerCase()?.includes(user?.toLowerCase())
 		)[0];
 		event.preventDefault();
 		setError(false);
-		if (event) {
+		if (filtered_user) {
 			const docRef = doc(db, "Abhishek", filtered_user);
 			const docSnap = await getDoc(docRef);
 			if (docSnap.exists() && docSnap.data()) {
