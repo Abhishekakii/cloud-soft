@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 // import fire_db from "../utils/firebase";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
 import Papa from "papaparse";
-import { async } from "@firebase/util";
 
 const UploadFiles = () => {
 	// a local state to store the currently selected file.
@@ -21,15 +20,7 @@ const UploadFiles = () => {
 			header: true,
 			skipEmptyLines: true,
 			complete: (results) => {
-				// for (let obj of results.data) {
-				// 	// data.push(obj);
-				// 	// console.log(obj);
-				// 	data.push(obj);
-				// 	//  setDoc(doc(db, "test-db", obj.Endpoint), obj);
-				console.log(results?.data);
-				// data["data"] = [...results?.data];s
 				setFinalData(results?.data);
-				// }
 			},
 		});
 
@@ -38,7 +29,7 @@ const UploadFiles = () => {
 
 	const insertDataIntoDB = async () => {
 		for (const obj of finalData) {
-			await setDoc(doc(db, "test-db", obj.Auth), obj);
+			await setDoc(doc(db, "Abhishek", obj.Auth), obj);
 		}
 	};
 
